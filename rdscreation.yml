@@ -1,1 +1,12 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Rds oracle database
 
+#Parameters:
+
+Resources:  
+    RDS:
+      Type: AWS::RDS::DBInstance
+      Properties:
+        AvailabilityZone: us-west-2a
+         DBName: ebankingrds
+         StorageType: 
