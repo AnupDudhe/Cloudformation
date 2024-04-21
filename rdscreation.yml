@@ -8,7 +8,7 @@ Resources:
     Type: AWS::RDS::DBInstance
     Properties:
       DBInstanceIdentifier: MyDBInstancetest
-      AvailabilityZone: us-west-2a
+      AvailabilityZone: ap-south-1a #mumbai
       DBName: ebanking
       StorageType: gp2
       MasterUsername: admin
@@ -17,7 +17,7 @@ Resources:
       AllocatedStorage: 100
       DBInstanceClass: db.m5.large
       VPCSecurityGroups:
-      - sg-081787a4571bd9c08
+      - sg-03f08be106e97ec74
       EngineVersion: 19.0.0.0.ru-2024-01.rur-2024-01.r1
       #port: '1521'
       EnablePerformanceInsights: true #Enable Performance Insights
@@ -25,7 +25,7 @@ Resources:
       BackupRetentionPeriod: 1
       #AutomaticBackupReplicationRegion: us-west-2
       #BackupWindow: "01:00-02:00" 
-      KmsKeyId: arn:aws:kms:us-west-2:533266960972:key/d7d2ab36-7a50-4cd4-978a-41054f493e5c
+      KmsKeyId: arn:aws:kms:ap-south-1:533266960972:key/12198d73-ed12-4eaa-a4b5-d3153202ab08
       StorageEncrypted: true
       AutoMinorVersionUpgrade: false
       DeletionProtection: true
