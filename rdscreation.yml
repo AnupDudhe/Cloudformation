@@ -13,7 +13,7 @@ Resources:
       MasterUsername: admin
       MasterUserPassword: "12345678"
       Engine: oracle-se2
-      AllocatedStorage: 100GiB
+      AllocatedStorage: 100 GiB
       DBInstanceClass: db.m5.large
       VPCSecurityGroups:
       - sg-081787a4571bd9c08
