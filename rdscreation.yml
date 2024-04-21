@@ -7,13 +7,14 @@ Resources:
   RDS:
     Type: AWS::RDS::DBInstance
     Properties:
+      DBInstanceIdentifier: MyDBInstancetest
       AvailabilityZone: us-west-2a
-      DBName: ebankingrds
+      DBName: ebanking
       StorageType: gp2
       MasterUsername: admin
       MasterUserPassword: "12345678"
       Engine: oracle-se2
-      AllocatedStorage: 100 
+      AllocatedStorage: 100
       DBInstanceClass: db.m5.large
       VPCSecurityGroups:
       - sg-081787a4571bd9c08
@@ -25,8 +26,10 @@ Resources:
       #AutomaticBackupReplicationRegion: us-west-2
       #BackupWindow: "01:00-02:00" 
       KmsKeyId: arn:aws:kms:us-west-2:533266960972:key/d7d2ab36-7a50-4cd4-978a-41054f493e5c
+      StorageEncrypted: true
       AutoMinorVersionUpgrade: false
       DeletionProtection: true
+      LicenseModel: license-included
       #DeletionPolicy: Retain #means even if you delete the stack of cform you need to manually delete rds 
       Tags:
       - Key: Env
