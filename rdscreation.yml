@@ -8,7 +8,7 @@ Resources:
     Type: AWS::RDS::DBInstance
     Properties:
       DBInstanceIdentifier: MyDBInstancetest
-      AvailabilityZone: ap-south-1a #mumbai
+      AvailabilityZone: ap-south-2a #hyderabad
       DBName: ebanking
       StorageType: gp2
       MasterUsername: admin
@@ -25,7 +25,7 @@ Resources:
       BackupRetentionPeriod: 1
       #AutomaticBackupReplicationRegion: us-west-2
       #BackupWindow: "01:00-02:00" 
-      KmsKeyId: arn:aws:kms:ap-south-1:533266960972:key/12198d73-ed12-4eaa-a4b5-d3153202ab08
+      KmsKeyId: arn:aws:kms:ap-south-2:378424009885:key/155fb0ae-e3a8-468d-83ef-ca4e17e44cee  #hyderabad region kms arn
       StorageEncrypted: true
       AutoMinorVersionUpgrade: false
       DeletionProtection: true
@@ -33,5 +33,5 @@ Resources:
       #DeletionPolicy: Retain #means even if you delete the stack of cform you need to manually delete rds 
       Tags:
       - Key: Env
-        Value: Prod
+        Value: Prod(DR)
 
