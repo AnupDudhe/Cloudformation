@@ -9,17 +9,19 @@ Resources:
     Properties:
       DBInstanceIdentifier: MyDBInstancetest
       AvailabilityZone: ap-south-2a #hyderabad
-      DBName: ebanking
+      DBName: EBANK
+      MultiAZ: false
       StorageType: gp2
       MasterUsername: admin
       MasterUserPassword: "12345678"
       Engine: oracle-se2
-      AllocatedStorage: 100
+      AllocatedStorage: 110
+       PubliclyAccessible: true
       DBInstanceClass: db.m5.large
       VPCSecurityGroups:
       - sg-03f08be106e97ec74
-      EngineVersion: 19.0.0.0.ru-2024-01.rur-2024-01.r1
-      #port: '1521'
+      EngineVersion: 19.0.0.0.ru-2023-07.rur-2023-07.r1
+      port: 8805
       EnablePerformanceInsights: true #Enable Performance Insights
       PerformanceInsightsRetentionPeriod: 7
       BackupRetentionPeriod: 1
