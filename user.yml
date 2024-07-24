@@ -5,7 +5,8 @@ Resources:
                Type: AWS::IAM::User
                Properties: 
                 UserName: AnupCFTUser
-                PolicyName: AdministratorAccess
+                ManagedPolicyArns:
+                   - arn:aws:iam::aws:policy/AdministratorAccess
                 Tags: 
                       - Key: "Name"
                         Value: "AnupCFTUser"
