@@ -6,7 +6,7 @@ Resources:
             Properties: 
                 ImageId: "ami-06708ae97ebafbaa9" 
                 InstanceType: t2.micro
-                KeyName: testkey
+                KeyName: osakaanup
                 AvailabilityZone: ap-northeast-3a
                 DisableApiTermination: True 
                 Tags: 
