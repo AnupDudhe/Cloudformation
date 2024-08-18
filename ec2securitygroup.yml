@@ -5,9 +5,9 @@ Resources:
     Properties:
       VpcId: vpc-0c34137c6a24580a0  #Hyderabad's default VPC     
       GroupDescription: Security group for app server
-      GroupName: mob_pgm_all
+      GroupName: sg
       SecurityGroupEgress:    
-        - CidrIp: 202.88.154.70/32
+        - CidrIp: 
           Description: Remote
           FromPort: 3389                               # Outbound rules
           IpProtocol: tcp
@@ -21,33 +21,33 @@ Resources:
         - IpProtocol: tcp
           FromPort: 443
           ToPort: 443                                
-          CidrIp: 61.0.40.203/32
-          Description: Jath ho
+          CidrIp: /32
+          Description: test
         - IpProtocol: tcp
           FromPort: 443
           ToPort: 443                                
-          CidrIp:  183.87.225.124/32     
+          CidrIp:  /32     
           Description: datalink https
         - IpProtocol: tcp
           FromPort: 443
           ToPort: 443                                
-          CidrIp:  110.227.214.246/32     
-          Description: jath Urban Co-Op Bank Sangli
+          CidrIp:  /32     
+          Description: test
         - IpProtocol: tcp
           FromPort: 443
           ToPort: 443                                
-          CidrIp:  202.88.154.70/32     
-          Description: hathway https
+          CidrIp:   /32   
+          Description: 
         - IpProtocol: tcp
           FromPort: 3389
           ToPort: 3389                                
-          CidrIp:  202.88.154.70/32     
+          CidrIp:       
           Description: hathway rdp
         - IpProtocol: tcp
           FromPort: 443
           ToPort: 443                                
-          CidrIp:  182.74.132.246/32     
-          Description: jath Urban Co-Op Bank Sangli
+          CidrIp:  /32     
+          Description: 
         - IpProtocol: tcp
           FromPort: 3389
           ToPort: 3389                                
@@ -56,10 +56,10 @@ Resources:
         - IpProtocol: tcp
           FromPort: 443
           ToPort: 443                               
-          CidrIp:  61.2.228.197/32   
-          Description: https djyoti
+          CidrIp:  /32   
+          Description: https
         - IpProtocol: tcp
           FromPort: 3389
           ToPort: 3389                                
-          CidrIp:  183.87.225.124/32    
+          CidrIp:  /32    
           Description: datalink rdp 
