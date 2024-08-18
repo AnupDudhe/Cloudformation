@@ -9,7 +9,7 @@ Resources:
     Properties:
       DBInstanceIdentifier: MyDBInstancetest
       AvailabilityZone: ap-south-2a #hyderabad
-      DBName: EBANK
+      DBName: CBZ
       MultiAZ: false
       StorageType: gp2
       MasterUsername: admin
