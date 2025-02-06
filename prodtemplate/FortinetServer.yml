@@ -1,0 +1,107 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Resources:
+  MyIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: ec2.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/AdministratorAccess
+      - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+      - arn:aws:iam::aws:policy/AmazonSSMFullAccess
+      - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
+      RoleName: AdminAccessRoleForEc2Fortinet
+
+  MyInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: "/"
+      Roles:
+      - Ref: MyIAMRole
+      InstanceProfileName: AdminAccessInstanceProfileFortinet
+
+  FetchLatestResources:
+    Type: 'Custom::FetchLatestResources'
+    Properties:
+      ServiceToken: arn:aws:lambda:ap-south-2:youraccountnumber:function:FetchLatestFortinetServer
+
+  MyVolume:
+    Type: AWS::EC2::Volume
+    Properties:
+      AvailabilityZone: ap-south-2b
+      SnapshotId: !GetAtt FetchLatestResources.SnapshotId
+      Tags:
+      - Key: Name
+        Value: MyVolume
+
+  MyEc2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      NetworkInterfaces:
+      - NetworkInterfaceId: !Ref MyNetworkInterface
+        DeviceIndex: 0
+      - NetworkInterfaceId: !Ref MyNetworkInterface1
+        DeviceIndex: 1
+      ImageId: !GetAtt FetchLatestResources.AmiId
+      InstanceType: t3.medium
+      KeyName: adminaccess
+      DisableApiTermination: true
+      InstanceInitiatedShutdownBehavior: stop
+      IamInstanceProfile: !Ref MyInstanceProfile
+      Volumes:
+      - Device: "/dev/sda2"
+        VolumeId: !Ref MyVolume
+      Tags:
+      - Key: Name
+        Value: FortinetServer
+
+  MyNetworkInterface:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      SubnetId: subnet-071ed6b8a221a17f4
+        #this is hardcoded need to change it sooner or later
+        #- Fn::ImportValue: MyExportedSubnetId   #this is the closest solution need to work on it later.
+      PrivateIpAddress: 172.31.53.123
+      Description: ENI with public and private IP
+      GroupSet:
+      - Fn::ImportValue: MyExportedSecurityGroupIdEleven
+      Tags:
+      - Key: Name
+        Value: MyNetworkInterface
+
+  MyNetworkInterface1:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      SubnetId: subnet-0451d9963eaae2873
+      PrivateIpAddress: 172.31.36.253
+      Description: ENI with private IP
+      GroupSet:
+      - Fn::ImportValue: MyExportedSecurityGroupIdEleven
+      Tags:
+      - Key: Name
+        Value: MyNetworkInterface1
+
+  MyElasticIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+
+  EIPAssociation:
+    Type: AWS::EC2::EIPAssociation
+    Properties:
+      NetworkInterfaceId: !Ref MyNetworkInterface
+      AllocationId: !GetAtt MyElasticIP.AllocationId
+
+Outputs:
+  MyEc2InstanceId:
+    Description: Instance Id
+    Value: !Ref MyEc2Instance
+    Export:
+      Name: MyExportedEc2FortinetInstanceId

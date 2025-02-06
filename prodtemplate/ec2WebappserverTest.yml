@@ -1,0 +1,125 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  MyIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: ec2.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/AdministratorAccess
+      - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+      - arn:aws:iam::aws:policy/AmazonSSMFullAccess
+      - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
+      RoleName: AdminAccessRoleForEc2
+
+  MyInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: "/"
+      Roles:
+      - Ref: MyIAMRole
+      InstanceProfileName: AdminAccessInstanceProfile
+  FetchLatestResources:
+    Type: 'Custom::FetchLatestResources'
+    Properties:
+      ServiceToken: arn:aws:lambda:ap-south-2:youraccountnumber:function:FetchLatestEc2AMI
+  MyVolume:
+    Type: AWS::EC2::Volume
+    Properties:
+      AvailabilityZone: ap-south-2b
+      SnapshotId: !GetAtt FetchLatestResources.SnapshotId
+      Tags:
+      - Key: Name
+        Value: MyVolume
+
+  MyEc2Instance:
+    Type: AWS::EC2::Instance
+    #DependsOn: MySecurityGroup   
+    Properties:
+      ImageId: !GetAtt FetchLatestResources.AmiId
+      PrivateIpAddress: 172.31.45.47
+      InstanceType: t3.micro
+      KeyName: adminaccess
+      DisableApiTermination: true
+      InstanceInitiatedShutdownBehavior: stop
+      AvailabilityZone: ap-south-2b
+      IamInstanceProfile: !Ref MyInstanceProfile # Attach the IAM role here
+      Volumes:
+      - Device: "/dev/sda2"
+        VolumeId:
+          Ref: MyVolume
+      Tags:
+      - Key: Name
+        Value: AppServer
+
+      SecurityGroups:
+      - Fn::ImportValue: MyExportedSecurityGroupNameAws #use group name when vpc is not default
+      - Fn::ImportValue: MyExportedSecurityGroupNameSecondAws
+      - Fn::ImportValue: MyExportedSecurityGroupNameThirdAws
+      - Fn::ImportValue: MyExportedSecurityGroupNameFifthAws
+      - Fn::ImportValue: MyExportedSecurityGroupNameNinthAws
+      UserData:
+        Fn::Base64: !Sub |
+          <powershell>                       
+          $dir = $env:TEMP + "\ssm"
+          New-Item -ItemType directory -Path $dir -Force
+          cd $dir
+          (New-Object System.Net.WebClient).DownloadFile("https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/windows_amd64/AmazonSSMAgentSetup.exe", $dir + "\AmazonSSMAgentSetup.exe")
+          Start-Process .\AmazonSSMAgentSetup.exe -ArgumentList @("/q", "/log", "install.log") -Wait
+
+          # Install AWS CLI
+          #Invoke-WebRequest -Uri "https://awscli.amazonaws.com/AWSCLIV2.msi" -OutFile "C:\AWSCLIV2.msi"
+          #Start-Process msiexec.exe -ArgumentList "/i C:\AWSCLIV2.msi /quiet" -NoNewWindow -Wait
+           
+          # Step 1: Create the directory
+          #New-Item -Path "C:\rds_exe" -ItemType "directory" -Force
+
+          # Step 2: Retrieve the RDS Endpoint
+          #$RdsEndpoint = (aws cloudformation list-exports --region ap-south-2 --query "Exports[?Name=='MyCustomRDSEndpointExport'].Value" --output text) > C:\rds_exe\rds.txt
+          #aws cloudformation list-exports --region ap-south-2 --query "Exports[?Name=='MyCustomRDSEndpointExport'].Value" --output text > C:\Users\Administrator\Desktop\rds.txt
+
+          # Step 3: Write the RDS Endpoint to the file
+          #$RdsEndpoint | Out-File -FilePath "C:\rds_exe\rds.txt" -Encoding ASCII
+           
+          # its done   
+          #$Msg = "Its done"
+          </powershell>
+  EIPAssociation:
+    Type: AWS::EC2::EIPAssociation
+    Properties:
+      InstanceId: !Ref MyEc2Instance
+      EIP: !ImportValue MyExportedEip
+
+Outputs:
+  MyEc2InstanceId:
+    Description: Instance Id
+    Value: !Ref MyEc2Instance
+    Export:
+      Name: MyExportedEc2InstanceId
+  #purpose of this cft is to create a much cheaper EC2  for testing purposes and delete it once done during patching time
+
+
+
+
+
+
+  #for future reference
+  # SecurityGroupsIds:                                       #use group ids when vpc is not default
+  #     - Fn::ImportValue: MyExportedSecurityGroupId 
+  #     - !GetAtt  MySecurityGroupId
+  #     - !ImportValue MySecurityGroupId
+
+  # ImageId:
+  #     Fn::Transform:
+  #             Name: FindAmi
+  #             Parameters:
+  #                 OSFamily: "windows"      
+
+
+

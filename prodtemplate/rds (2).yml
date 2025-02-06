@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Rds oracle database
+
+#Parameters:
+
+Resources:
+  FetchLatestRdsSnapshot:
+    Type: 'Custom::FetchLatestRdsSnapshot'
+    Properties:
+      ServiceToken: arn:aws:lambda:ap-south-2:youraccountnumber:function:rdsautomated
+  RDS:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBSnapshotIdentifier: !GetAtt FetchLatestRdsSnapshot.SnapshotId
+      DBInstanceIdentifier: ebank
+      AvailabilityZone: ap-south-2b #hyderabad
+      DBName: EBANK
+      MultiAZ: false
+      StorageType: gp2
+      MasterUsername: admin
+      MasterUserPassword: "admin123"
+      Engine: oracle-se2
+      AllocatedStorage: 140
+      MaxAllocatedStorage: 250
+      #EnableStorageAutoResize: true
+      PubliclyAccessible: true
+      DBInstanceClass: db.r6i.large
+      VPCSecurityGroups:
+      - Fn::ImportValue: MyExportedSecurityGroupIdSecondAws
+      - Fn::ImportValue: MyExportedSecurityGroupIdFifthAws
+      - Fn::ImportValue: MyExportedSecurityGroupIdSixthAws
+      - Fn::ImportValue: MyExportedSecurityGroupIdNinthAws
+      # - Fn::ImportValue: MyExportedSecurityGroupNameSecondAws
+      # - Fn::ImportValue: MyExportedSecurityGroupNameFifthAws
+
+      EngineVersion: 19.0.0.0.ru-2023-07.rur-2023-07.r1
+      #port: 8805
+      EnablePerformanceInsights: true #Enable Performance Insights
+      PerformanceInsightsRetentionPeriod: 7
+      BackupRetentionPeriod: 15
+      #AutomaticBackupReplicationRegion: ap-south-2
+      PreferredBackupWindow: "01:00-01:30"
+      KmsKeyId: arn:aws:kms:ap-south-2:378424009885:key/021f8050-1f55-42a5-ac94-9ec55a1ad03b #hyderabad region kms arn
+      StorageEncrypted: true
+      AutoMinorVersionUpgrade: false
+      DeletionProtection: true
+      #CACertificateIdentifier: rds-ca-2019          need to check if any error persists.
+      LicenseModel: license-included
+      CopyTagsToSnapshot: true
+      #DeletionPolicy: Retain #means even if you delete the stack of cform you need to manually delete rds 
+      Tags:
+      - Key: Env
+        Value: Prod
+
+Outputs:
+  RDSEndpoint:
+    Description: "Endpoint of the RDS instance"
+    Value: !GetAtt RDS.Endpoint.Address
+    Export:
+      Name: "MyCustomRDSEndpointExport"
