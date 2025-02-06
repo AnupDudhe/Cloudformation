@@ -1,0 +1,66 @@
+AWSTemplateFormationVersion: "2010-09-09"
+Resources:
+MySecurityGroupEleven:
+  Type: Aws::Ec2::SecurityGroup
+Properties:
+  GroupDescription: AppServerAdditionalSG
+  VpcId: vpcidinserthere
+  GroupName: AppServerAdditionalSG
+  SecurityGroupIngress:
+  - IpProtocol: tcp
+    FromPort: 8805
+    ToPort: 8805
+    CidrIp: 172.31.32.0/20
+    Description: Port for DB from subnet
+  - IpProtocol: tcp
+    FromPort: 8805
+    ToPort: 8805
+    CidrIp: /32
+    Description: Port for the Db from Public ip
+  - IpProtocol: tcp
+    FromPort: 82
+    ToPort: 82
+    CidrIp: 172.31.32.0/20
+    Description: communication between mobile server
+  - IpProtocol: tcp
+    FromPort: 82
+    ToPort: 82
+    CidrIp: /32
+    Description: communication between mobile server
+  - IpProtocol: tcp
+    FromPort: 75
+    ToPort: 75
+    CidrIp: 172.31.32.0/20
+    Description: communication between mobile server
+  - IpProtocol: tcp
+    FromPort: 75
+    ToPort: 75
+    CidrIp: /32
+    Description: communication between mobile server
+  - IpProtocol: tcp
+    FromPort: 443
+    ToPort: 443
+    CidrIp: /32
+    Description: communication between mobile server
+  - IpProtocol: tcp
+    FromPort: 443
+    ToPort: 443
+    CidrIp: 172.31.32.0/20
+    Description: communication between mobile server
+  SecurityGroupEgress:
+  - IpProtocol: -1
+    FromPort: 0
+    ToPort: 65535
+    CidrIp: 0.0.0.0/0
+    Description: Port for the HTTPS
+
+Outputs:
+  MySecurityGroupId:
+    Description: Security Group ID
+    Value: !Ref MySecurityGroupEleven
+    Export:
+      Name: MyExportedSecurityGroupIdEleven
+  MySecurityGroupName:
+    Value: !GetAtt MySecurityGroupEleven.GroupName
+    Export:
+      Name: MyExportedSecurityGroupNameEleven

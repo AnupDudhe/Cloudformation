@@ -1,0 +1,63 @@
+Resources:
+  MySecurityGroupSeven:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: launch-wizard-1 created 2023-10-05T09:18:40.869Z
+      VpcId: vpc- # Default Hyderabad VPC
+      GroupName: launch-wizard-1
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: /32
+        Description: Allow SSH access from
+      - IpProtocol: tcp
+        FromPort: 8805
+        ToPort: 8805
+        CidrIp: /32
+        Description: For the Oracle database
+      - IpProtocol: tcp
+        FromPort: 3389
+        ToPort: 3389
+        CidrIp: /32
+        Description: Office-Broadband (Data_Link)
+      - IpProtocol: tcp
+        FromPort: 3389
+        ToPort: 3389
+        CidrIp: /32
+        Description: Office-Broadband (Hathway)
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: /32
+        Description: Allow SSH access from
+      - IpProtocol: tcp
+        FromPort: 443
+        ToPort: 443
+        CidrIp: /32
+        Description: HTTPS the secure version of HTTP
+      SecurityGroupEgress:
+      - IpProtocol: tcp
+        ToPort: 3389
+        FromPort: 3389
+        CidrIp: /32
+        Description: For RDP purposes we are open
+      - IpProtocol: tcp
+        ToPort: 3389
+        FromPort: 3389
+        CidrIp: /32
+      - IpProtocol: tcp
+        ToPort: 443
+        FromPort: 443
+        CidrIp: /32
+
+Outputs:
+  MySecurityGroupId:
+    Description: Security Group ID
+    Value: !Ref MySecurityGroupSeven
+    Export:
+      Name: MyExportedSecurityGroupIdSeven
+  MySecurityGroupName:
+    Value: !GetAtt MySecurityGroupSeven.GroupName
+    Export:
+      Name: MyExportedSecurityGroupNameSeven

@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  MySecurityGroupThird:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: vpc-0c #Hyderabad's default VPC     
+      GroupDescription: Security group attached to instances to securely connect to ebank. Modification could lead to connection loss.
+      GroupName: ec2-rds-2
+      SecurityGroupEgress:
+      - IpProtocol: tcp
+        FromPort: 8805
+        ToPort: 8805
+        DestinationSecurityGroupId: !ImportValue MyExportedSecurityGroupIdSecond
+        Description: Rule to allow connections to ebank from any instances this security group is attached to
+        #DestinationSecurityGroupId: - Fn::ImportValue: MyExportedSecurityGroupIdSecond
+        #DestinationSecurityGroupName: Fn::GetAtt: - MyExportedSecurityGroupNameSecond
+        #  DestinationSecurityGroupId: 
+        #   - Fn::ImportValue: MyExportedSecurityGroupIdSecond
+
+
+
+
+Outputs:
+  MySecurityGroupId:
+    #Value: !GetAtt MySecurityGroup.GroupId
+    Description: Security Group ID
+    Value: !Ref MySecurityGroupThird
+    Export:
+      Name: MyExportedSecurityGroupIdThird
+  MySecurityGroupName:
+    Value: !GetAtt MySecurityGroupThird.GroupName
+    Export:
+      Name: MyExportedSecurityGroupNameThird

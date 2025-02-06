@@ -1,0 +1,39 @@
+Resources:
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: RDS_DefaultSecurityGroup
+      VpcId: vpc- # Default Hydrabad VPC
+      GroupName: RDS_DefaultSecurityGroup
+
+  SecurityGroupIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref MySecurityGroup
+      IpProtocol: -1
+      FromPort: 0
+      ToPort: 65535
+      SourceSecurityGroupId: !Ref MySecurityGroup
+      Description: Allow all inbound traffic within the same security group
+
+  SecurityGroupEgress:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId: !Ref MySecurityGroup
+      IpProtocol: -1
+      FromPort: 0
+      ToPort: 65535
+      CidrIp: 0.0.0.0/0
+      Description: Allow all outbound traffic
+
+Outputs:
+  MySecurityGroupId:
+    Description: Security Group ID
+    Value: !Ref MySecurityGroup
+    Export:
+      Name: MyExportedSecurityGroupIdSixth
+  MySecurityGroupName:
+    Description: Security Group Name
+    Value: !GetAtt MySecurityGroup.GroupName
+    Export:
+      Name: MyExportedSecurityGroupNameSixth

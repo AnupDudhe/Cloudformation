@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  MySecurityGroupSecond:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: vpc- #Hyderabad's default VPC     
+      GroupDescription: Security group attached to ebank to allow EC2 instances with specific security groups attached to connect to the database. Modification could lead to connection loss.
+      GroupName: rds-ec2-2
+      SecurityGroupEgress:
+      - IpProtocol: tcp
+        FromPort: 8805
+        ToPort: 8805
+        CidrIp: /32
+        Description: outbound rule rds hathway
+      SecurityGroupIngress:
+      # Inbound rules
+      - IpProtocol: tcp
+        FromPort: 8805
+        ToPort: 8805
+        CidrIp: /32
+        Description: Datalink inbound
+      - IpProtocol: tcp
+        FromPort: 8805
+        ToPort: 8805
+        CidrIp: /32
+        Description: dev machine
+      - IpProtocol: tcp
+        FromPort: 8805
+        ToPort: 8805
+        CidrIp: /32
+        Description:
+      - IpProtocol: tcp
+        FromPort: 8805
+        ToPort: 8805
+        SourceSecurityGroupId: !ImportValue MyExportedSecurityGroupIdThird
+        #CidrIp: /32
+        Description: Rule to allow connections from EC2 instances with sg-08cbdc9f9c6124594 attached
+Outputs:
+  MySecurityGroupId:
+    #Value: !GetAtt MySecurityGroup.GroupId
+    Description: Security Group ID
+    Value: !Ref MySecurityGroupSecond
+    Export:
+      Name: MyExportedSecurityGroupIdSecond
+  MySecurityGroupName:
+    Value: !GetAtt MySecurityGroupSecond.GroupName
+    Export:
+      Name: MyExportedSecurityGroupNameSecond

@@ -1,0 +1,63 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  MySecurityGroupTen:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "mobileappserversg"
+      VpcId: "vpc-"
+      GroupName: "mobileappserversg"
+      SecurityGroupIngress:
+      - IpProtocol: "tcp"
+        FromPort: 443
+        ToPort: 443
+        CidrIp: "0.0.0.0/0"
+        Description: "Port for the HTTPS"
+      - IpProtocol: "tcp"
+        FromPort: 8805
+        ToPort: 8805
+        CidrIp: "0.0.0.0/0"
+        Description: "Port for the database"
+      - IpProtocol: "tcp"
+        FromPort: 1521
+        ToPort: 1521
+        CidrIp: "/32"
+        Description: "Port for the datalink"
+      SecurityGroupEgress:
+      - IpProtocol: "-1"
+        FromPort: 0
+        ToPort: 65535
+        CidrIp: "0.0.0.0/0"
+        Description: "Port for the HTTPS/HTTP"
+      - IpProtocol: "tcp"
+        FromPort: 8805
+        ToPort: 8805
+        CidrIp: 172.31.32.0/20
+        Description: "Port for the database"
+      - IpProtocol: "tcp"
+        FromPort: 8805
+        ToPort: 8805
+        CidrIp: /32
+      - IpProtocol: "tcp"
+        FromPort: 8805
+        ToPort: 8805
+        CidrIp: /32
+      - IpProtocol: "tcp"
+        FromPort: 8805
+        ToPort: 8805
+        CidrIp: /32
+      - IpProtocol: "tcp"
+        FromPort: 8805
+        ToPort: 8805
+        CidrIp: /32
+        Description: "Port for the database"
+
+Outputs:
+  MySecurityGroupId:
+    Description: "Security Group ID"
+    Value: !Ref MySecurityGroupTen
+    Export:
+      Name: "MyExportedSecurityGroupIdTen"
+  MySecurityGroupName:
+    Value: !GetAtt MySecurityGroupTen.GroupName
+    Export:
+      Name: "MyExportedSecurityGroupNameTen"

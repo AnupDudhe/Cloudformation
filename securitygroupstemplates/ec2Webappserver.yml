@@ -1,0 +1,63 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  MyVolume:
+    Type: AWS::EC2::Volume
+    Properties:
+      AvailabilityZone: ap-south-2b
+      SnapshotId: snap-0
+      Tags:
+      - Key: Name
+        Value: MyVolume
+
+  MyEc2Instance:
+    Type: AWS::EC2::Instance
+    #DependsOn: MySecurityGroup   
+    Properties:
+      ImageId: ami-0
+      PrivateIpAddress: 172.31.45.112
+      InstanceType: t3.large
+      KeyName: adminaccess
+      DisableApiTermination: true
+      InstanceInitiatedShutdownBehavior: stop
+      AvailabilityZone: ap-south-2b
+      Volumes:
+      - Device: "/dev/sda2"
+        VolumeId:
+          Ref: MyVolume
+      Tags:
+      - Key: Name
+        Value: AppServer
+
+      SecurityGroups:
+      - Fn::ImportValue: MyExportedSecurityGroupName #use group name when vpc is not default
+      - Fn::ImportValue: MyExportedSecurityGroupNameSecond
+      - Fn::ImportValue: MyExportedSecurityGroupNameThird
+      - Fn::ImportValue: MyExportedSecurityGroupNameFifth
+      - Fn::ImportValue: MyExportedSecurityGroupNameNinth
+
+  MyEip:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      InstanceId: !Ref MyEc2Instance
+
+Outputs:
+  MyEc2InstanceId:
+    Description: Instance Id
+    Value: !Ref MyEc2Instance
+    Export:
+      Name: MyExportedEc2InstanceId
+  #for future reference
+  # SecurityGroupsIds:                                       #use group ids when vpc is not default
+  #     - Fn::ImportValue: MyExportedSecurityGroupId 
+  #     - !GetAtt  MySecurityGroupId
+  #     - !ImportValue MySecurityGroupId
+
+  # ImageId:
+  #     Fn::Transform:
+  #             Name: FindAmi
+  #             Parameters:
+  #                 OSFamily: "windows"      
+
+
+

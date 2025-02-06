@@ -1,0 +1,49 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  MySecurityGroupNinth:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: vpc- #Hyderabad's default VPC     
+      GroupDescription: Security group attached to instances to securely connect to ebank. Modification could lead to connection loss.
+      GroupName: rds&ec2-connection
+      SecurityGroupEgress:
+      - IpProtocol: tcp
+        FromPort: 8805
+        ToPort: 8805
+        CidrIp: /32
+        #DestinationSecurityGroupId: !ImportValue MyExportedSecurityGroupIdFifth
+        Description: Rule to allow connections to ebank from test app server instance (public ip of test app server)
+        #DestinationSecurityGroupName: Fn::GetAtt: - MyExportedSecurityGroupNameSecond
+      - IpProtocol: tcp
+        FromPort: 8805
+        ToPort: 8805
+        CidrIp: /32
+        #DestinationSecurityGroupId: !ImportValue MyExportedSecurityGroupIdFifth
+        Description: Rule to allow connections to ebank from app server instance (public ip of app server)
+        #DestinationSecurityGroupName: Fn::GetAtt: - MyExportedSecurityGroupNameSecond
+      - IpProtocol: tcp
+        FromPort: 8805
+        ToPort: 8805
+        CidrIp: 172.31.45.112/20
+        #DestinationSecurityGroupId: !ImportValue MyExportedSecurityGroupIdFifth
+        Description: Rule to allow connections to ebank from app server instance (private ip of app server)
+        #DestinationSecurityGroupName: Fn::GetAtt: - MyExportedSecurityGroupNameSecond   
+      - IpProtocol: tcp
+        FromPort: 8805
+        ToPort: 8805
+        CidrIp: 172.31.35.81/20
+        #DestinationSecurityGroupId: !ImportValue MyExportedSecurityGroupIdFifth
+        Description: Rule to allow connections to ebank from app server instance (private ip of test app server)
+        #DestinationSecurityGroupName: Fn::GetAtt: - MyExportedSecurityGroupNameSecond 
+
+Outputs:
+  MySecurityGroupId:
+    #Value: !GetAtt MySecurityGroup.GroupId
+    Description: Security Group ID
+    Value: !Ref MySecurityGroupNinth
+    Export:
+      Name: MyExportedSecurityGroupIdNinth
+  MySecurityGroupName:
+    Value: !GetAtt MySecurityGroupNinth.GroupName
+    Export:
+      Name: MyExportedSecurityGroupNameNinth

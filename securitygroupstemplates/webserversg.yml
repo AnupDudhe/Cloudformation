@@ -1,0 +1,83 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: vpc- #Hyderabad's default VPC     
+      GroupDescription: Security group for app server
+      GroupName: mob_pgm_all
+      SecurityGroupEgress:
+      # Outbound rules
+      - CidrIp: /32
+        Description: Remote
+        FromPort: 3389
+        IpProtocol: tcp
+        ToPort: 3389
+      - CidrIp: 0.0.0.0/0
+        Description: All outbound access from https
+        FromPort: 443
+        IpProtocol: tcp
+        ToPort: 443
+      SecurityGroupIngress:
+      # Inbound rules
+      - IpProtocol: tcp
+        FromPort: 443
+        ToPort: 443
+        CidrIp: /32
+        Description:
+      - IpProtocol: tcp
+        FromPort: 443
+        ToPort: 443
+        CidrIp: /32
+        Description: datalink https
+      - IpProtocol: tcp
+        FromPort: 443
+        ToPort: 443
+        CidrIp: /32
+        Description:
+      - IpProtocol: tcp
+        FromPort: 443
+        ToPort: 443
+        CidrIp: /32
+        Description: hathway https
+      - IpProtocol: tcp
+        FromPort: 3389
+        ToPort: 3389
+        CidrIp: /32
+        Description: hathway rdp
+      - IpProtocol: tcp
+        FromPort: 443
+        ToPort: 443
+        CidrIp: /32
+        Description:
+      - IpProtocol: tcp
+        FromPort: 3389
+        ToPort: 3389
+        CidrIp: 172.30.2.53/32
+        Description: rdp
+      - IpProtocol: tcp
+        FromPort: 443
+        ToPort: 443
+        CidrIp: /32
+        Description: https
+      - IpProtocol: tcp
+        FromPort: 3389
+        ToPort: 3389
+        CidrIp: /32
+        Description: datalink rdp
+      - IpProtocol: tcp
+        FromPort: 443
+        ToPort: 443
+        CidrIp: /32
+        Description:
+Outputs:
+  MySecurityGroupId:
+    #Value: !GetAtt MySecurityGroup.GroupId
+    Description: Security Group ID
+    Value: !Ref MySecurityGroup
+    Export:
+      Name: MyExportedSecurityGroupId
+  MySecurityGroupName:
+    Value: !GetAtt MySecurityGroup.GroupName
+    Export:
+      Name: MyExportedSecurityGroupName

@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  MyVolume:
+    Type: AWS::EC2::Volume
+    Properties:
+      AvailabilityZone: ap-south-2b
+      SnapshotId: snap-
+      Tags:
+      - Key: Name
+        Value: MyVolume
+
+  MyEc2Instance:
+    Type: AWS::EC2::Instance
+    #DependsOn: MySecurityGroup   
+    Properties:
+      ImageId: ami-
+      PrivateIpAddress: 172.31.35.81
+      InstanceType: t3.micro
+      KeyName: adminaccess
+      AvailabilityZone: ap-south-2b
+      Volumes:
+      - Device: "/dev/sda1"
+        VolumeId:
+          Ref: MyVolume
+      Tags:
+      - Key: Name
+        Value: Test_AppServer
+
+      SecurityGroups:
+      - Fn::ImportValue: MyExportedSecurityGroupNameThird
+      - Fn::ImportValue: MyExportedSecurityGroupNameSeven
+      - Fn::ImportValue: MyExportedSecurityGroupNameFourth

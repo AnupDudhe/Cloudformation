@@ -1,0 +1,15 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Template to create an Elastic IP
+
+Resources:
+  MyEip:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+
+Outputs:
+  ElasticIPAddress:
+    Description: The allocated Elastic IP address
+    Value: !Ref MyEip
+    Export:
+      Name: MyExportedEip
